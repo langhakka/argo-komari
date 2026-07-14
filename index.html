@@ -1,966 +1,382 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeFlow | Visual Development Platform</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Roboto', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f9fbfd;
-        }
-        
-        h1, h2, h3, h4 {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            line-height: 1.3;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* Header & Navigation */
-        header {
-            background-color: #fff;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
-            position: fixed;
-            width: 100%;
-            z-index: 1000;
-        }
-        
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-        }
-        
-        .logo-icon {
-            color: #4361ee;
-            font-size: 28px;
-            margin-right: 10px;
-        }
-        
-        .logo-text {
-            font-family: 'Poppins', sans-serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: #333;
-        }
-        
-        .logo-text span {
-            color: #4361ee;
-        }
-        
-        .nav-links {
-            display: flex;
-            list-style: none;
-        }
-        
-        .nav-links li {
-            margin-left: 30px;
-        }
-        
-        .nav-links a {
-            text-decoration: none;
-            color: #555;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        
-        .nav-links a:hover {
-            color: #4361ee;
-        }
-        
-        .cta-button {
-            background-color: #4361ee;
-            color: white;
-            border: none;
-            padding: 12px 28px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-        
-        .cta-button:hover {
-            background-color: #3a56d4;
-            transform: translateY(-2px);
-        }
-        
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: #333;
-            cursor: pointer;
-        }
-        
-        /* Hero Section */
-        .hero {
-            padding: 150px 0 100px;
-            background: linear-gradient(135deg, #f0f4ff 0%, #f9fbfd 100%);
-        }
-        
-        .hero-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        
-        .hero-text {
-            flex: 1;
-            padding-right: 40px;
-        }
-        
-        .hero-text h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            color: #222;
-        }
-        
-        .hero-text h1 span {
-            color: #4361ee;
-        }
-        
-        .hero-text p {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 30px;
-            max-width: 600px;
-        }
-        
-        .hero-buttons {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .secondary-button {
-            background-color: white;
-            color: #4361ee;
-            border: 2px solid #4361ee;
-            padding: 12px 28px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .secondary-button:hover {
-            background-color: #f0f4ff;
-        }
-        
-        .hero-image {
-            flex: 1;
-            text-align: center;
-        }
-        
-        .hero-image img {
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 20px 40px rgba(67, 97, 238, 0.15);
-        }
-        
-        /* Features Section */
-        .section-title {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        
-        .section-title h2 {
-            font-size: 36px;
-            color: #222;
-            margin-bottom: 15px;
-        }
-        
-        .section-title p {
-            color: #666;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        
-        .features {
-            padding: 100px 0;
-            background-color: white;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-        }
-        
-        .feature-card {
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .feature-icon {
-            background-color: #eef2ff;
-            color: #4361ee;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            font-size: 28px;
-        }
-        
-        .feature-card h3 {
-            font-size: 22px;
-            margin-bottom: 15px;
-        }
-        
-        .feature-card p {
-            color: #666;
-        }
-        
-        /* Benefits Section */
-        .benefits {
-            padding: 100px 0;
-            background-color: #f0f4ff;
-        }
-        
-        .benefits-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-        
-        .benefit-item {
-            text-align: center;
-            padding: 30px 20px;
-        }
-        
-        .benefit-icon {
-            color: #4361ee;
-            font-size: 40px;
-            margin-bottom: 20px;
-        }
-        
-        .benefit-item h3 {
-            font-size: 22px;
-            margin-bottom: 15px;
-        }
-        
-        .benefit-item p {
-            color: #666;
-        }
-        
-        /* Testimonials */
-        .testimonials {
-            padding: 100px 0;
-            background-color: white;
-        }
-        
-        .testimonial-slider {
-            max-width: 800px;
-            margin: 0 auto;
-            position: relative;
-        }
-        
-        .testimonial {
-            background: #f9fbfd;
-            padding: 40px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-        
-        .testimonial-text {
-            font-size: 18px;
-            font-style: italic;
-            margin-bottom: 30px;
-            color: #555;
-        }
-        
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .author-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #ddd;
-            margin-right: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #4361ee;
-            font-size: 24px;
-        }
-        
-        .author-info h4 {
-            font-size: 18px;
-            margin-bottom: 5px;
-        }
-        
-        .author-info p {
-            color: #777;
-            font-size: 14px;
-        }
-        
-        /* Pricing Section */
-        .pricing {
-            padding: 100px 0;
-            background-color: #f9fbfd;
-        }
-        
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-        }
-        
-        .pricing-card {
-            background: white;
-            border-radius: 10px;
-            padding: 40px 30px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            transition: transform 0.3s;
-        }
-        
-        .pricing-card.featured {
-            border-top: 5px solid #4361ee;
-            transform: scale(1.05);
-            position: relative;
-        }
-        
-        .featured-badge {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #4361ee;
-            color: white;
-            padding: 5px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        
-        .pricing-card:hover {
-            transform: translateY(-10px);
-        }
-        
-        .pricing-card.featured:hover {
-            transform: scale(1.05) translateY(-10px);
-        }
-        
-        .plan-name {
-            font-size: 24px;
-            margin-bottom: 15px;
-            color: #333;
-        }
-        
-        .plan-price {
-            font-size: 48px;
-            font-weight: 700;
-            color: #4361ee;
-            margin-bottom: 20px;
-        }
-        
-        .plan-price span {
-            font-size: 16px;
-            color: #777;
-        }
-        
-        .plan-features {
-            list-style: none;
-            margin-bottom: 30px;
-        }
-        
-        .plan-features li {
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-            color: #555;
-        }
-        
-        .plan-features li:last-child {
-            border-bottom: none;
-        }
-        
-        /* CTA Section */
-        .cta-section {
-            padding: 100px 0;
-            background: linear-gradient(135deg, #4361ee 0%, #3a56d4 100%);
-            text-align: center;
-            color: white;
-        }
-        
-        .cta-section h2 {
-            font-size: 36px;
-            margin-bottom: 20px;
-        }
-        
-        .cta-section p {
-            font-size: 18px;
-            max-width: 700px;
-            margin: 0 auto 30px;
-            opacity: 0.9;
-        }
-        
-        .cta-section .cta-button {
-            background-color: white;
-            color: #4361ee;
-            font-size: 16px;
-            padding: 15px 40px;
-        }
-        
-        .cta-section .cta-button:hover {
-            background-color: #f0f4ff;
-        }
-        
-        /* Footer */
-        footer {
-            background-color: #222;
-            color: #ccc;
-            padding: 70px 0 20px;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            margin-bottom: 50px;
-        }
-        
-        .footer-column h3 {
-            font-size: 20px;
-            color: white;
-            margin-bottom: 25px;
-        }
-        
-        .footer-links {
-            list-style: none;
-        }
-        
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-        
-        .footer-links a {
-            color: #aaa;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer-links a:hover {
-            color: #4361ee;
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid #444;
-            font-size: 14px;
-            color: #888;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .hero-content {
-                flex-direction: column;
-            }
-            
-            .hero-text {
-                padding-right: 0;
-                margin-bottom: 50px;
-                text-align: center;
-            }
-            
-            .hero-text p {
-                margin: 0 auto 30px;
-            }
-            
-            .pricing-card.featured {
-                transform: none;
-            }
-            
-            .pricing-card.featured:hover {
-                transform: translateY(-10px);
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-            }
-            
-            .hero-text h1 {
-                font-size: 36px;
-            }
-            
-            .section-title h2 {
-                font-size: 30px;
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .hero-buttons button {
-                width: 100%;
-                max-width: 300px;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .hero {
-                padding: 130px 0 80px;
-            }
-            
-            .features, .benefits, .testimonials, .pricing, .cta-section {
-                padding: 70px 0;
-            }
-            
-            .feature-card, .testimonial {
-                padding: 25px;
-            }
-            
-            .plan-price {
-                font-size: 36px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>流媒体 UI </title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { background:#0a0a0a; }
+  body { font-family:-apple-system, "Helvetica Neue", Arial, sans-serif; overflow-x:hidden; }
+
+  /* ---------- 顶部切换条 ---------- */
+  #switcher {
+    position:sticky; top:0; z-index:100;
+    display:flex; gap:0; background:#0a0a0a; border-bottom:1px solid #222;
+    padding:0 12px;
+  }
+  #switcher button {
+    appearance:none; border:none; background:none; cursor:pointer;
+    color:#777; font-size:13px; font-weight:600; letter-spacing:.3px;
+    padding:14px 16px; border-bottom:2px solid transparent; transition:color .15s;
+    font-family:-apple-system, "Helvetica Neue", Arial, sans-serif;
+  }
+  #switcher button.on { color:#fff; border-bottom-color:#fff; }
+  #switcher button:hover { color:#ddd; }
+
+  .panel { display:none; min-height:100vh; }
+  .panel.on { display:block; }
+
+  /* ============ 通用行组件 ============ */
+  .rows { padding:28px 0 60px; }
+  .row { margin-bottom:34px; }
+  .row-head { display:flex; align-items:baseline; justify-content:space-between; padding:0 40px; margin-bottom:14px; }
+  .row-title { font-size:17px; font-weight:600; }
+  .row-more { font-size:12px; opacity:.5; }
+  .row-track { display:flex; gap:10px; overflow-x:auto; padding:0 40px 6px; scrollbar-width:none; }
+  .row-track::-webkit-scrollbar { display:none; }
+  .poster { flex:0 0 auto; border-radius:4px; position:relative; overflow:hidden; display:flex; align-items:flex-end; }
+  .poster .cap { font-size:11px; padding:6px 8px; position:relative; z-index:2; font-weight:600; }
+
+  /* =====================================================================
+     1) NETFLIX
+     ===================================================================== */
+  #netflix { background:#141414; color:#fff; }
+  #netflix .nav { display:flex; align-items:center; justify-content:space-between; padding:16px 40px; position:relative; z-index:5; }
+  #netflix .nav-left { display:flex; align-items:center; gap:26px; }
+  #netflix .logo { font-family:'Bebas Neue', sans-serif; color:#E50914; font-size:28px; letter-spacing:1px; }
+  #netflix .nav a { color:#e5e5e5; font-size:13px; text-decoration:none; opacity:.85; }
+  #netflix .nav a.on { font-weight:700; opacity:1; }
+  #netflix .nav-right { display:flex; align-items:center; gap:18px; color:#e5e5e5; font-size:16px; }
+  #netflix .avatar { width:26px; height:26px; border-radius:4px; background:linear-gradient(135deg,#5b4bcf,#c0392b); }
+
+  #netflix .hero { height:78vh; position:relative;
+    background:
+      linear-gradient(180deg, rgba(20,20,20,0) 40%, rgba(20,20,20,.9) 88%, #141414 100%),
+      linear-gradient(90deg, rgba(20,20,20,.95) 10%, rgba(20,20,20,.2) 55%),
+      linear-gradient(120deg,#3a2a1a,#1a1410 60%);
+  }
+  #netflix .hero-inner { position:absolute; left:40px; bottom:70px; max-width:520px; }
+  #netflix .hero-tag { font-size:12px; letter-spacing:2px; color:#e5e5e5; opacity:.75; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  #netflix .hero-title { font-family:'Bebas Neue', sans-serif; font-size:76px; line-height:.95; letter-spacing:1px; margin-bottom:18px; }
+  #netflix .hero-meta { font-size:14px; color:#d2d2d2; margin-bottom:18px; }
+  #netflix .hero-meta b { color:#46d369; font-weight:700; }
+  #netflix .hero-desc { font-size:15px; color:#e5e5e5; line-height:1.5; margin-bottom:22px; }
+  #netflix .hero-cta { display:flex; gap:12px; }
+  #netflix .btn { border:none; border-radius:4px; padding:11px 26px; font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px; cursor:pointer; }
+  #netflix .btn.play { background:#fff; color:#000; }
+  #netflix .btn.info { background:rgba(109,109,110,.7); color:#fff; }
+
+  #netflix .poster { width:170px; height:96px; background:linear-gradient(135deg,#2b2b2b,#1a1a1a); }
+  #netflix .poster.tall { width:130px; height:190px; }
+  #netflix .poster .num { position:absolute; left:-6px; bottom:-14px; font-family:'Bebas Neue', sans-serif; font-size:100px; color:#000; -webkit-text-stroke:2px #4a4a4a; z-index:1; }
+  #netflix .row-title { color:#e5e5e5; }
+
+  /* =====================================================================
+     2) DISNEY+
+     ===================================================================== */
+  #disney { color:#fff; background:radial-gradient(120% 100% at 15% -10%, #142a55 0%, #0a1330 42%, #040714 100%); }
+  #disney .nav { display:flex; align-items:center; gap:30px; padding:18px 40px; }
+  #disney .logo { font-family:'Poppins',sans-serif; font-weight:700; font-size:20px; letter-spacing:.5px; }
+  #disney .logo span { color:#01D9F5; }
+  #disney .nav a { color:#cfd6e6; font-size:12px; font-weight:600; text-decoration:none; display:flex; align-items:center; gap:6px; opacity:.8; }
+  #disney .nav a.on { opacity:1; color:#fff; }
+  #disney .nav-right { margin-left:auto; display:flex; align-items:center; gap:16px; }
+  #disney .avatar { width:28px; height:28px; border-radius:8px; background:linear-gradient(135deg,#01D9F5,#7B61FF); }
+
+  #disney .brand-pills { display:flex; gap:10px; padding:18px 40px 6px; }
+  #disney .pill { flex:1; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-family:'Poppins',sans-serif; font-weight:700; font-size:13px; color:#fff; letter-spacing:.4px; }
+  #disney .pill.p1 { background:linear-gradient(135deg,#1e2b6b,#3a54c9); }
+  #disney .pill.p2 { background:linear-gradient(135deg,#7a1620,#c0392b); }
+  #disney .pill.p3 { background:linear-gradient(135deg,#141414,#3d3d3d); }
+  #disney .pill.p4 { background:linear-gradient(135deg,#0c3d2e,#1f8a5f); }
+  #disney .pill.p5 { background:linear-gradient(135deg,#5a3d0c,#c98a1c); }
+
+  #disney .hero { margin:22px 40px 0; height:56vh; border-radius:18px; position:relative; overflow:hidden;
+    background: linear-gradient(0deg, rgba(4,7,20,.95), rgba(4,7,20,.1) 60%), linear-gradient(120deg,#0e2f52,#132257 55%,#1a1440); }
+  #disney .hero-inner { position:absolute; left:34px; bottom:30px; max-width:60%; }
+  #disney .hero-title { font-family:'Poppins',sans-serif; font-weight:700; font-size:38px; margin-bottom:12px; }
+  #disney .hero-desc { font-size:13.5px; color:#cfd6e6; line-height:1.6; margin-bottom:18px; }
+  #disney .hero-cta { display:flex; gap:12px; }
+  #disney .btn { border:none; border-radius:10px; padding:11px 24px; font-size:14px; font-weight:700; display:flex; align-items:center; gap:8px; cursor:pointer; font-family:'Poppins',sans-serif; }
+  #disney .btn.play { background:#fff; color:#0a1330; }
+  #disney .btn.info { background:rgba(255,255,255,.14); color:#fff; }
+
+  #disney .poster { width:150px; height:210px; border-radius:10px; background:linear-gradient(160deg,#1c2a52,#0d1226); }
+  #disney .row-title { color:#fff; font-family:'Poppins',sans-serif; }
+
+  /* =====================================================================
+     3) MAX
+     ===================================================================== */
+  #max { background:#000; color:#fff; }
+  #max .nav { display:flex; align-items:center; padding:20px 40px; gap:30px; }
+  #max .logo { font-weight:700; font-size:22px; letter-spacing:1px; position:relative; padding-left:14px; }
+  #max .logo::before { content:''; position:absolute; left:0; top:2px; width:6px; height:18px; border-radius:3px; background:linear-gradient(180deg,#8b2fe0,#2f7bf0); }
+  #max .nav a { color:#b9b9b9; font-size:12.5px; text-decoration:none; padding-bottom:18px; border-bottom:2px solid transparent; }
+  #max .nav a.on { color:#fff; border-bottom-color:#fff; }
+  #max .nav-right { margin-left:auto; color:#b9b9b9; font-size:16px; display:flex; gap:18px; align-items:center; }
+
+  #max .hero { height:82vh; position:relative;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.92) 92%, #000 100%),
+      linear-gradient(100deg, rgba(0,0,0,.9) 15%, rgba(0,0,0,0) 60%),
+      linear-gradient(135deg,#1a0f2e,#0a0a12 65%);
+  }
+  #max .hero-eyebrow { display:flex; align-items:center; gap:8px; font-size:11px; letter-spacing:2.5px; color:#b28cff; text-transform:uppercase; margin-bottom:16px; }
+  #max .hero-eyebrow .dot { width:6px; height:6px; border-radius:50%; background:linear-gradient(135deg,#8b2fe0,#2f7bf0); }
+  #max .hero-inner { position:absolute; left:44px; bottom:80px; max-width:640px; }
+  #max .hero-title { font-family:'Playfair Display', serif; font-weight:600; font-style:italic; font-size:56px; line-height:1.08; margin-bottom:18px; }
+  #max .hero-desc { font-size:14.5px; color:#c7c7c7; line-height:1.7; margin-bottom:24px; max-width:520px; }
+  #max .hero-cta { display:flex; gap:14px; }
+  #max .btn { border:none; border-radius:6px; padding:12px 26px; font-size:14px; font-weight:600; display:flex; align-items:center; gap:8px; cursor:pointer; }
+  #max .btn.play { background:linear-gradient(90deg,#8b2fe0,#2f7bf0); color:#fff; }
+  #max .btn.info { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.25); color:#fff; }
+
+  #max .row-title { font-family:'Playfair Display', serif; font-style:italic; font-weight:600; color:#eee; }
+  #max .poster { width:160px; height:224px; border-radius:6px; background:linear-gradient(160deg,#1c1626,#0a0a10); }
+
+  /* =====================================================================
+     4) APPLE TV+
+     ===================================================================== */
+  #appletv { background:#000; color:#fff; font-weight:300; }
+  #appletv .nav { display:flex; align-items:center; padding:22px 44px; gap:36px; }
+  #appletv .logo { display:flex; align-items:center; gap:8px; font-weight:600; font-size:17px; letter-spacing:.2px; }
+  #appletv .logo .ic { width:16px; height:16px; border-radius:4px; background:#fff; }
+  #appletv .nav a { color:rgba(255,255,255,.65); font-size:13px; font-weight:400; text-decoration:none; letter-spacing:.2px; }
+  #appletv .nav a.on { color:#fff; }
+  #appletv .nav-right { margin-left:auto; display:flex; gap:22px; align-items:center; color:rgba(255,255,255,.8); font-size:15px; }
+
+  #appletv .hero { height:86vh; position:relative;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0) 45%, #000 96%),
+      linear-gradient(115deg,#101010,#050505 70%);
+  }
+  #appletv .hero-inner { position:absolute; left:50%; bottom:110px; transform:translateX(-50%); text-align:center; width:100%; max-width:640px; }
+  #appletv .hero-kicker { font-size:12px; letter-spacing:4px; color:rgba(255,255,255,.5); text-transform:uppercase; margin-bottom:16px; font-weight:400; }
+  #appletv .hero-title { font-size:44px; font-weight:300; letter-spacing:.5px; margin-bottom:22px; }
+  #appletv .hero-cta { display:flex; gap:14px; justify-content:center; }
+  #appletv .btn { border:none; border-radius:22px; padding:11px 26px; font-size:14px; font-weight:500; display:flex; align-items:center; gap:8px; cursor:pointer; letter-spacing:.2px; }
+  #appletv .btn.play { background:#fff; color:#000; }
+  #appletv .btn.info { background:rgba(255,255,255,.14); color:#fff; }
+
+  #appletv .row-head { padding:0 44px; }
+  #appletv .row-track { padding:0 44px 6px; }
+  #appletv .row-title { font-weight:400; font-size:19px; letter-spacing:.2px; }
+  #appletv .poster { width:280px; height:157px; border-radius:10px; background:linear-gradient(150deg,#161616,#050505); }
+  #appletv .row { margin-bottom:44px; }
+
+  @media (max-width: 720px) {
+    #netflix .hero-title { font-size:46px; }
+    #max .hero-title { font-size:36px; }
+    #appletv .hero-title { font-size:30px; }
+    #disney .hero-title { font-size:28px; }
+    .row-head, .row-track { padding-left:18px; padding-right:18px; }
+    #netflix .nav, #disney .nav, #max .nav, #appletv .nav { padding-left:18px; padding-right:18px; }
+    #netflix .hero-inner, #max .hero-inner { left:18px; }
+  }
+</style>
 </head>
 <body>
-    <!-- Header & Navigation -->
-    <header>
-        <div class="container">
-            <nav>
-                <div class="logo">
-                    <div class="logo-icon"><i class="fas fa-bezier-curve"></i></div>
-                    <div class="logo-text">Code<span>Flow</span></div>
-                </div>
-                
-                <ul class="nav-links">
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#benefits">Benefits</a></li>
-                    <li><a href="#testimonials">Testimonials</a></li>
-                    <li><a href="#pricing">Pricing</a></li>
-                    <li><a href="#">Resources</a></li>
-                </ul>
-                
-                <button class="cta-button">Start Free Trial</button>
-                <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
-            </nav>
-        </div>
-    </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-text">
-                    <h1>Build Apps Faster With <span>Visual Development</span></h1>
-                    <p>CodeFlow empowers teams to create enterprise-grade applications with minimal coding. Drag, drop, and connect components to build powerful web and mobile apps in record time.</p>
-                    <div class="hero-buttons">
-                        <button class="cta-button">Start Building Free</button>
-                        <button class="secondary-button">Watch Demo</button>
-                    </div>
-                </div>
-                <div class="hero-image">
-                    <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="CodeFlow Platform Interface">
-                </div>
-            </div>
-        </div>
-    </section>
+<div id="switcher">
+  <button class="on" data-t="netflix">Netflix 风格</button>
+  <button data-t="disney">Disney+ 风格</button>
+  <button data-t="max">Max 风格</button>
+  <button data-t="appletv">Apple TV+ 风格</button>
+</div>
 
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <div class="container">
-            <div class="section-title">
-                <h2>Powerful Features for Rapid Development</h2>
-                <p>CodeFlow provides all the tools you need to build, deploy, and scale applications without writing extensive code.</p>
-            </div>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-th-large"></i>
-                    </div>
-                    <h3>Visual Builder</h3>
-                    <p>Drag and drop UI components to design responsive interfaces. Connect data sources with simple point-and-click actions.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-database"></i>
-                    </div>
-                    <h3>Database Integration</h3>
-                    <p>Connect to any data source with built-in connectors. Automatically generate CRUD operations without writing SQL.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h3>Cross-Platform</h3>
-                    <p>Build once, deploy everywhere. Generate applications for web, iOS, and Android from a single visual design.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-code"></i>
-                    </div>
-                    <h3>Extensible with Code</h3>
-                    <p>Add custom functionality with JavaScript when needed. Our platform doesn't limit your creativity or complexity.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3>Enterprise Security</h3>
-                    <p>Built-in authentication, authorization, and data encryption. SOC2 compliant with enterprise-grade security features.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-rocket"></i>
-                    </div>
-                    <h3>One-Click Deployment</h3>
-                    <p>Deploy to cloud or on-premises with a single click. Automatic scaling and monitoring included.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- ================= NETFLIX ================= -->
+<div class="panel on" id="netflix">
+  <div class="nav">
+    <div class="nav-left">
+      <div class="logo">MOVIEBOX</div>
+      <a class="on" href="#">首页</a>
+      <a href="#">剧集</a>
+      <a href="#">电影</a>
+      <a href="#">新增</a>
+      <a href="#">我的片单</a>
+    </div>
+    <div class="nav-right">
+      <span>&#128269;</span>
+      <span>&#128276;</span>
+      <div class="avatar"></div>
+    </div>
+  </div>
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-tag">&#9733; 系列剧集</div>
+      <div class="hero-title">暗涌之城</div>
+      <div class="hero-meta"><b>96% 匹配</b> &nbsp; 2026 &nbsp; 16+ &nbsp; 3季 &nbsp; 悬疑</div>
+      <div class="hero-desc">一座被雾气笼罩的港口城市，缉毒警与地下网络周旋十年，直到一桩旧案的重启，把所有人都拖回了当年的真相。</div>
+      <div class="hero-cta">
+        <button class="btn play">&#9654; 播放</button>
+        <button class="btn info">&#9432; 详情</button>
+      </div>
+    </div>
+  </div>
+  <div class="rows">
+    <div class="row">
+      <div class="row-head"><span class="row-title">继续观看</span><span class="row-more">全部</span></div>
+      <div class="row-track">
+        <div class="poster"></div><div class="poster"></div><div class="poster"></div><div class="poster"></div><div class="poster"></div><div class="poster"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="row-head"><span class="row-title">今日热门 · 剧集</span><span class="row-more">全部</span></div>
+      <div class="row-track">
+        <div class="poster tall"><span class="num">1</span></div>
+        <div class="poster tall"><span class="num">2</span></div>
+        <div class="poster tall"><span class="num">3</span></div>
+        <div class="poster tall"><span class="num">4</span></div>
+        <div class="poster tall"><span class="num">5</span></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="row-head"><span class="row-title">悬疑犯罪片单</span><span class="row-more">全部</span></div>
+      <div class="row-track">
+        <div class="poster tall"></div><div class="poster tall"></div><div class="poster tall"></div><div class="poster tall"></div><div class="poster tall"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <!-- Benefits Section -->
-    <section class="benefits" id="benefits">
-        <div class="container">
-            <div class="section-title">
-                <h2>Why Choose CodeFlow?</h2>
-                <p>Join thousands of companies accelerating their digital transformation with low-code development.</p>
-            </div>
-            
-            <div class="benefits-grid">
-                <div class="benefit-item">
-                    <div class="benefit-icon">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <h3>10x Faster Development</h3>
-                    <p>Build applications in days instead of months with visual development tools.</p>
-                </div>
-                
-                <div class="benefit-item">
-                    <div class="benefit-icon">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                    <h3>Reduce Costs by 70%</h3>
-                    <p>Lower development and maintenance costs with fewer resources required.</p>
-                </div>
-                
-                <div class="benefit-item">
-                    <div class="benefit-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h3>Citizen Developers</h3>
-                    <p>Enable business users to build solutions with minimal IT assistance.</p>
-                </div>
-                
-                <div class="benefit-item">
-                    <div class="benefit-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3>Scale Effortlessly</h3>
-                    <p>From prototype to enterprise-scale applications with the same platform.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- ================= DISNEY+ ================= -->
+<div class="panel" id="disney">
+  <div class="nav">
+    <div class="logo">WONDER<span>+</span></div>
+    <a class="on" href="#">主页</a>
+    <a href="#">剧集</a>
+    <a href="#">电影</a>
+    <a href="#">动画</a>
+    <a href="#">纪录片</a>
+    <div class="nav-right">
+      <span>&#128269;</span>
+      <div class="avatar"></div>
+    </div>
+  </div>
+  <div class="brand-pills">
+    <div class="pill p1">奇幻宇宙</div>
+    <div class="pill p2">超能英雄</div>
+    <div class="pill p3">星际传奇</div>
+    <div class="pill p4">自然探索</div>
+    <div class="pill p5">经典动画</div>
+  </div>
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-title">深海回声</div>
+      <div class="hero-desc">一支科考队在南太平洋深处发现了不属于这个时代的信号。奇幻冒险动画剧集，全龄段合家欢首选。</div>
+      <div class="hero-cta">
+        <button class="btn play">&#9654; 立即播放</button>
+        <button class="btn info">+ 加入片单</button>
+      </div>
+    </div>
+  </div>
+  <div class="rows">
+    <div class="row">
+      <div class="row-head"><span class="row-title">合家欢精选</span><span class="row-more">查看全部</span></div>
+      <div class="row-track">
+        <div class="poster"></div><div class="poster"></div><div class="poster"></div><div class="poster"></div><div class="poster"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="row-head"><span class="row-title">超能英雄系列</span><span class="row-more">查看全部</span></div>
+      <div class="row-track">
+        <div class="poster"></div><div class="poster"></div><div class="poster"></div><div class="poster"></div><div class="poster"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <!-- Testimonials -->
-    <section class="testimonials" id="testimonials">
-        <div class="container">
-            <div class="section-title">
-                <h2>Trusted by Industry Leaders</h2>
-                <p>See what our customers have to say about their experience with CodeFlow.</p>
-            </div>
-            
-            <div class="testimonial-slider">
-                <div class="testimonial">
-                    <div class="testimonial-text">
-                        "CodeFlow transformed how we deliver solutions to our business units. What used to take 6 months now takes 3 weeks. Our development team can focus on complex problems while business teams build their own solutions."
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">SC</div>
-                        <div class="author-info">
-                            <h4>Sarah Chen</h4>
-                            <p>CTO, TechGrowth Inc.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- ================= MAX ================= -->
+<div class="panel" id="max">
+  <div class="nav">
+    <div class="logo">nova</div>
+    <a class="on" href="#">首页</a>
+    <a href="#">剧集</a>
+    <a href="#">电影</a>
+    <a href="#">臻选原创</a>
+    <div class="nav-right">
+      <span>&#128269;</span>
+      <div class="avatar"></div>
+    </div>
+  </div>
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow"><span class="dot"></span>臻选原创 · 全新上线</div>
+      <div class="hero-title">灰烬与银河</div>
+      <div class="hero-desc">一位退役飞行员被卷入横跨三代人的家族秘密，故事在战后废墟与星际航线之间来回穿梭，是本季最受期待的限定剧集。</div>
+      <div class="hero-cta">
+        <button class="btn play">&#9654; 开始观看</button>
+        <button class="btn info">&#9432; 更多信息</button>
+      </div>
+    </div>
+  </div>
+  <div class="rows">
+    <div class="row">
+      <div class="row-head"><span class="row-title">臻选热播</span><span class="row-more">全部</span></div>
+      <div class="row-track">
+        <div class="poster"></div><div class="poster"></div><div class="poster"></div><div class="poster"></div><div class="poster"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="row-head"><span class="row-title">编辑之选 · 冷门佳片</span><span class="row-more">全部</span></div>
+      <div class="row-track">
+        <div class="poster"></div><div class="poster"></div><div class="poster"></div><div class="poster"></div><div class="poster"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <!-- Pricing Section -->
-    <section class="pricing" id="pricing">
-        <div class="container">
-            <div class="section-title">
-                <h2>Simple, Transparent Pricing</h2>
-                <p>Choose the plan that fits your needs. All plans include core features with no hidden fees.</p>
-            </div>
-            
-            <div class="pricing-grid">
-                <div class="pricing-card">
-                    <h3 class="plan-name">Starter</h3>
-                    <div class="plan-price">$29<span>/month</span></div>
-                    <ul class="plan-features">
-                        <li>Up to 5 users</li>
-                        <li>10 GB storage</li>
-                        <li>Basic components</li>
-                        <li>Community support</li>
-                        <li>1 production app</li>
-                    </ul>
-                    <button class="secondary-button">Get Started</button>
-                </div>
-                
-                <div class="pricing-card featured">
-                    <div class="featured-badge">Most Popular</div>
-                    <h3 class="plan-name">Professional</h3>
-                    <div class="plan-price">$89<span>/month</span></div>
-                    <ul class="plan-features">
-                        <li>Up to 25 users</li>
-                        <li>100 GB storage</li>
-                        <li>All components</li>
-                        <li>Priority support</li>
-                        <li>10 production apps</li>
-                        <li>Custom branding</li>
-                    </ul>
-                    <button class="cta-button">Try Free for 14 Days</button>
-                </div>
-                
-                <div class="pricing-card">
-                    <h3 class="plan-name">Enterprise</h3>
-                    <div class="plan-price">Custom</div>
-                    <ul class="plan-features">
-                        <li>Unlimited users</li>
-                        <li>Unlimited storage</li>
-                        <li>All features included</li>
-                        <li>24/7 dedicated support</li>
-                        <li>Unlimited apps</li>
-                        <li>On-premises option</li>
-                    </ul>
-                    <button class="secondary-button">Contact Sales</button>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- ================= APPLE TV+ ================= -->
+<div class="panel" id="appletv">
+  <div class="nav">
+    <div class="logo"><span class="ic"></span>屏立方</div>
+    <a class="on" href="#">观看</a>
+    <a href="#">影库</a>
+    <a href="#">原创</a>
+    <div class="nav-right">
+      <span>&#128269;</span>
+      <div class="avatar"></div>
+    </div>
+  </div>
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-kicker">本周原创首播</div>
+      <div class="hero-title">静默海岸</div>
+      <div class="hero-cta">
+        <button class="btn play">&#9654; 播放</button>
+        <button class="btn info">详情</button>
+      </div>
+    </div>
+  </div>
+  <div class="rows">
+    <div class="row">
+      <div class="row-head"><span class="row-title">值得一看</span></div>
+      <div class="row-track">
+        <div class="poster"></div><div class="poster"></div><div class="poster"></div><div class="poster"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="row-head"><span class="row-title">原创剧集</span></div>
+      <div class="row-track">
+        <div class="poster"></div><div class="poster"></div><div class="poster"></div><div class="poster"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="container">
-            <h2>Start Building Today</h2>
-            <p>Join over 10,000 companies that use CodeFlow to accelerate their application development. No credit card required for the free trial.</p>
-            <button class="cta-button">Get Started for Free</button>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <div class="logo">
-                        <div class="logo-icon"><i class="fas fa-bezier-curve"></i></div>
-                        <div class="logo-text">Code<span>Flow</span></div>
-                    </div>
-                    <p style="margin-top: 20px; color: #aaa;">The leading visual development platform for building enterprise applications with minimal coding.</p>
-                </div>
-                
-                <div class="footer-column">
-                    <h3>Product</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Features</a></li>
-                        <li><a href="#">Pricing</a></li>
-                        <li><a href="#">Use Cases</a></li>
-                        <li><a href="#">Integrations</a></li>
-                        <li><a href="#">Roadmap</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-column">
-                    <h3>Resources</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Documentation</a></li>
-                        <li><a href="#">Tutorials</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Community</a></li>
-                        <li><a href="#">Support</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-column">
-                    <h3>Company</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Careers</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="copyright">
-                <p>&copy; 2023 CodeFlow. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        // Mobile menu toggle
-        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
-            const navLinks = document.querySelector('.nav-links');
-            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-            
-            // Adjust for mobile
-            if (window.innerWidth <= 768) {
-                if (navLinks.style.display === 'flex') {
-                    navLinks.style.flexDirection = 'column';
-                    navLinks.style.position = 'absolute';
-                    navLinks.style.top = '80px';
-                    navLinks.style.left = '0';
-                    navLinks.style.width = '100%';
-                    navLinks.style.backgroundColor = 'white';
-                    navLinks.style.padding = '20px';
-                    navLinks.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
-                    
-                    const navItems = document.querySelectorAll('.nav-links li');
-                    navItems.forEach(item => {
-                        item.style.margin = '10px 0';
-                    });
-                }
-            }
-        });
-        
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if(targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if(targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                    
-                    // Close mobile menu if open
-                    if(window.innerWidth <= 768) {
-                        document.querySelector('.nav-links').style.display = 'none';
-                    }
-                }
-            });
-        });
-        
-        // Simple testimonial slider
-        const testimonials = [
-            {
-                text: "CodeFlow transformed how we deliver solutions to our business units. What used to take 6 months now takes 3 weeks. Our development team can focus on complex problems while business teams build their own solutions.",
-                name: "Sarah Chen",
-                position: "CTO, TechGrowth Inc.",
-                initials: "SC"
-            },
-            {
-                text: "We reduced our app development time by 80% using CodeFlow. The visual interface made it easy for our analysts to build data dashboards without waiting for IT resources.",
-                name: "Marcus Johnson",
-                position: "Director of Operations, DataCorp",
-                initials: "MJ"
-            },
-            {
-                text: "As a non-technical founder, CodeFlow allowed me to build our MVP in just 2 months. I could test ideas quickly and iterate based on user feedback without deep coding knowledge.",
-                name: "Lisa Wang",
-                position: "Founder, StartupLabs",
-                initials: "LW"
-            }
-        ];
-        
-        let currentTestimonial = 0;
-        const testimonialElement = document.querySelector('.testimonial');
-        
-        function rotateTestimonial() {
-            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
-            updateTestimonial();
-        }
-        
-        function updateTestimonial() {
-            const testimonial = testimonials[currentTestimonial];
-            testimonialElement.innerHTML = `
-                <div class="testimonial-text">"${testimonial.text}"</div>
-                <div class="testimonial-author">
-                    <div class="author-avatar">${testimonial.initials}</div>
-                    <div class="author-info">
-                        <h4>${testimonial.name}</h4>
-                        <p>${testimonial.position}</p>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Auto-rotate testimonials every 5 seconds
-        setInterval(rotateTestimonial, 5000);
-        
-        // CTA button interactions
-        document.querySelectorAll('.cta-button').forEach(button => {
-            button.addEventListener('click', function() {
-                alert('Thank you for your interest in CodeFlow! You would be redirected to the signup page in a real implementation.');
-            });
-        });
-        
-        // Pricing card interactions
-        document.querySelectorAll('.pricing-card button').forEach(button => {
-            button.addEventListener('click', function() {
-                const planName = this.closest('.pricing-card').querySelector('.plan-name').textContent;
-                alert(`You selected the ${planName} plan. In a real implementation, you would be redirected to the checkout process.`);
-            });
-        });
-    </script>
+<script>
+document.getElementById('switcher').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b) return;
+  document.querySelectorAll('#switcher button').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  document.getElementById(b.dataset.t).classList.add('on');
+  window.scrollTo(0,0);
+});
+</script>
 </body>
 </html>

@@ -351,60 +351,42 @@ function argoType() {
 }
 
 // 获取临时隧道domain
-async function extractDomains() {
+async function extractDomains(retries = 30) {
   let argoDomain;
 
   if (ARGO_AUTH && ARGO_DOMAIN) {
     argoDomain = ARGO_DOMAIN;
     console.log('ARGO_DOMAIN:', argoDomain);
     await generateLinks(argoDomain);
-  } else {
+    return;
+  }
+
+  // 临时隧道：轮询等待 boot.log 中出现 trycloudflare 域名
+  for (let i = 0; i < retries; i++) {
     try {
+      if (!fs.existsSync(path.join(FILE_PATH, 'boot.log'))) {
+        throw new Error('boot.log not found');
+      }
       const fileContent = fs.readFileSync(path.join(FILE_PATH, 'boot.log'), 'utf-8');
       const lines = fileContent.split('\n');
-      const argoDomains = [];
-      lines.forEach((line) => {
+      for (const line of lines) {
         const domainMatch = line.match(/https?:\/\/([^ ]*trycloudflare\.com)\/?/);
         if (domainMatch) {
-          const domain = domainMatch[1];
-          argoDomains.push(domain);
-        }
-      });
-
-      if (argoDomains.length > 0) {
-        argoDomain = argoDomains[0];
-        console.log('ArgoDomain:', argoDomain);
-        await generateLinks(argoDomain);
-      } else {
-        console.log('ArgoDomain not found, re-running bot to obtain ArgoDomain');
-        fs.unlinkSync(path.join(FILE_PATH, 'boot.log'));
-        async function killBotProcess() {
-          try {
-            if (process.platform === 'win32') {
-              await exec(`taskkill /f /im ${botName}.exe > nul 2>&1`);
-            } else {
-              await exec(`pkill -f "[${botName.charAt(0)}]${botName.substring(1)}" > /dev/null 2>&1`);
-            }
-          } catch (error) {
-            // 忽略输出
-          }
-        }
-        killBotProcess();
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        const args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile ${FILE_PATH}/boot.log --loglevel info --url http://localhost:${ARGO_PORT}`;
-        try {
-          await exec(`nohup ${botPath} ${args} >/dev/null 2>&1 &`);
-          console.log(`${botName} is running`);
-          await new Promise((resolve) => setTimeout(resolve, 3000));
-          await extractDomains();
-        } catch (error) {
-          console.error(`Error executing command: ${error}`);
+          argoDomain = domainMatch[1];
+          console.log('ArgoDomain:', argoDomain);
+          await generateLinks(argoDomain);
+          return;
         }
       }
+      // 有文件但还没 domain，等一会再试
+      console.log(`Waiting for ArgoDomain... (${i + 1}/${retries})`);
     } catch (error) {
-      console.error('Error reading boot.log:', error);
+      console.log(`Waiting for boot.log... (${i + 1}/${retries})`);
     }
+    await new Promise((resolve) => setTimeout(resolve, 3000));
   }
+
+  console.error('Failed to obtain ArgoDomain after retries');
 }
 
 // 获取isp信息
