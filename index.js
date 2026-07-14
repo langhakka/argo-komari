@@ -248,10 +248,10 @@ async function downloadFilesAndRun() {
       serverPort = parts[1];
     }
 
-    // 如果仍然没有端口，使用默认端口
-    if (!serverPort) {
-      serverPort = '8008';
-    }
+// 如果仍然没有端口，使用Komari默认端口
+	    if (!serverPort) {
+	      serverPort = '25774';
+	    }
 
     // TLS自动检测：当端口为常用TLS端口时使用wss
     const tlsPorts = new Set(['443', '8443', '2096', '2087', '2083', '2053']);
