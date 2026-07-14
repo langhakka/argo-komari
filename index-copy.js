@@ -22,7 +22,10 @@ const UUID = process.env.UUID || (() => {
   if (fs.existsSync(uuidFile)) {
     return fs.readFileSync(uuidFile, 'utf-8').trim();
   }
-  const newUuid = crypto.randomUUID();
+  const newUuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = crypto.randomBytes(1)[0] % 16;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
   fs.writeFileSync(uuidFile, newUuid);
   console.log(`Generated UUID: ${newUuid}`);
   return newUuid;
@@ -100,11 +103,13 @@ function deleteNodes() {
   }
 }
 
-// 清理历史文件
+// 清理历史文件（保留.uuid和sub.txt）
 function cleanupOldFiles() {
   try {
     const files = fs.readdirSync(FILE_PATH);
+    const keepFiles = new Set(['.uuid', 'sub.txt']);
     files.forEach(file => {
+      if (keepFiles.has(file)) return;
       const filePath = path.join(FILE_PATH, file);
       try {
         const stat = fs.statSync(filePath);
