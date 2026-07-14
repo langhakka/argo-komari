@@ -33,7 +33,7 @@ Telegram交流反馈群组：https://t.me/eooceu
 | AUTO_ACCESS | 否 | false | 是否开启自动访问保活 |
 | PORT | 否 | 3000 | HTTP服务监听端口 |
 | ARGO_PORT | 否 | 8001 | Argo隧道端口 |
-| UUID | 否 | 89c13786-25aa-4520-b2e7-12cd60fb5202 | 用户UUID |
+| UUID | 否 | 自动生成 | 用户UUID,留空自动生成 |
 | KOMARI_SERVER | 否 | - | Komari服务器地址(例如 nz.abc.com:8008) |
 | KOMARI_PORT | 否 | - | Komari端口，留空则从KOMARI_SERVER中解析 |
 | KOMARI_KEY | 否 | - | Komari agent密钥/认证token |

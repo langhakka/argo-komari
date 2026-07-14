@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const http = require("http");
+const crypto = require("crypto");
 const axios = require("axios");
 const os = require('os');
 const fs = require("fs");
@@ -13,7 +14,7 @@ const AUTO_ACCESS = process.env.AUTO_ACCESS || false; // false关闭自动保活
 const FILE_PATH = process.env.FILE_PATH || '.tmp';   // 运行目录,sub节点文件保存目录
 const SUB_PATH = process.env.SUB_PATH || 'sub';       // 订阅路径
 const PORT = process.env.SERVER_PORT || process.env.PORT || 3000;        // http服务订阅端口
-const UUID = process.env.UUID || '9afd1229-b893-40c1-84dd-51e7ce204913'; // 使用komari,在不同的平台运行需修改UUID,否则会覆盖
+const UUID = process.env.UUID || crypto.randomUUID(); // 留空自动生成UUID
 const KOMARI_SERVER = process.env.KOMARI_SERVER || '';        // komari服务器地址,例如：nz.abc.com:8008
 const KOMARI_PORT = process.env.KOMARI_PORT || '';            // komari端口,留空则从KOMARI_SERVER中解析
 const KOMARI_KEY = process.env.KOMARI_KEY || '';              // komari agent密钥/认证token
