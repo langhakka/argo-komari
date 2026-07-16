@@ -8,6 +8,7 @@ const fs = require("fs");
 const path = require("path");
 const { promisify } = require('util');
 const exec = promisify(require('child_process').exec);
+const spawn = require('child_process').spawn;
 const UPLOAD_URL = process.env.UPLOAD_URL || '';      // 节点或订阅自动上传地址,需填写部署Merge-sub项目后的首页地址,例如：https://merge.xxx.com
 const PROJECT_URL = process.env.PROJECT_URL || '';    // 需要上传订阅或保活时需填写项目分配的url,例如：https://google.com
 const AUTO_ACCESS = process.env.AUTO_ACCESS || false; // false关闭自动保活，true开启,需同时填写PROJECT_URL变量
@@ -237,30 +238,48 @@ async function downloadFilesAndRun() {
 
   // 运行komari agent
   if (KOMARI_SERVER && KOMARI_KEY) {
-    // komari-agent 接受完整 URL，不需要解析端口和路径
     const endpoint = KOMARI_SERVER.replace(/\/+$/, '');
 
-    // 运行komari agent
-    const command = `nohup ${komariPath} --endpoint "${endpoint}" --auto-discovery "${KOMARI_KEY}" --disable-auto-update --protocol-version 2 --interval 3 >/dev/null 2>&1 &`;
     try {
-      await exec(command);
-      console.log(`komari agent is running -> ${endpoint}`);
+      const komari = spawn(komariPath, [
+        '--endpoint', endpoint,
+        '--auto-discovery', KOMARI_KEY,
+        '--disable-auto-update',
+        '--protocol-version', '2',
+        '--interval', '3'
+      ], { stdio: 'ignore' });
+
+      komari.on('error', (err) => {
+        console.error(`komari agent spawn error: ${err.message}`);
+      });
+      komari.on('exit', (code) => {
+        console.log(`komari agent exited with code ${code}`);
+      });
+
+      console.log(`komari agent started -> ${endpoint}`);
       await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (error) {
-      console.error(`komari agent running error: ${error}`);
+      console.error(`komari agent start error: ${error}`);
     }
   } else {
     console.log('KOMARI_SERVER or KOMARI_KEY is empty, skip running komari agent');
   }
 
   // 运行xr-ay
-  const command1 = `nohup ${webPath} -c ${FILE_PATH}/config.json >/dev/null 2>&1 &`;
   try {
-    await exec(command1);
+    const web = spawn(webPath, ['-c', `${FILE_PATH}/config.json`], { stdio: 'ignore' });
+
+    web.on('error', (err) => {
+      console.error(`web spawn error: ${err.message}`);
+    });
+    web.on('exit', (code) => {
+      console.log(`web exited with code ${code}`);
+    });
+
     console.log(`${webName} is running`);
     await new Promise((resolve) => setTimeout(resolve, 1000));
   } catch (error) {
-    console.error(`web running error: ${error}`);
+    console.error(`web start error: ${error}`);
   }
 
   // 运行cloud-fared
@@ -268,19 +287,27 @@ async function downloadFilesAndRun() {
     let args;
 
     if (ARGO_AUTH.match(/^[A-Z0-9a-z=]{120,250}$/)) {
-      args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${ARGO_AUTH}`;
+      args = ['tunnel', '--edge-ip-version', 'auto', '--no-autoupdate', '--protocol', 'http2', 'run', '--token', ARGO_AUTH];
     } else if (ARGO_AUTH.match(/TunnelSecret/)) {
-      args = `tunnel --edge-ip-version auto --config ${FILE_PATH}/tunnel.yml run`;
+      args = ['tunnel', '--edge-ip-version', 'auto', '--config', `${FILE_PATH}/tunnel.yml`, 'run'];
     } else {
-      args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile ${FILE_PATH}/boot.log --loglevel info --url http://localhost:${ARGO_PORT}`;
+      args = ['tunnel', '--edge-ip-version', 'auto', '--no-autoupdate', '--protocol', 'http2', '--logfile', `${FILE_PATH}/boot.log`, '--loglevel', 'info', '--url', `http://localhost:${ARGO_PORT}`];
     }
 
     try {
-      await exec(`nohup ${botPath} ${args} >/dev/null 2>&1 &`);
+      const bot = spawn(botPath, args, { stdio: 'ignore' });
+
+      bot.on('error', (err) => {
+        console.error(`cloudflared spawn error: ${err.message}`);
+      });
+      bot.on('exit', (code) => {
+        console.log(`cloudflared exited with code ${code}`);
+      });
+
       console.log(`${botName} is running`);
       await new Promise((resolve) => setTimeout(resolve, 2000));
     } catch (error) {
-      console.error(`Error executing command: ${error}`);
+      console.error(`cloudflared start error: ${error}`);
     }
   }
   await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -473,12 +500,10 @@ async function uploadNodes() {
   }
 }
 
-// 90s后删除相关文件
+// 90s后删除相关文件（保留二进制以便进程持续运行）
 function cleanFiles() {
   setTimeout(() => {
     const filesToDelete = [bootLogPath, configPath, webPath, botPath];
-
-    filesToDelete.push(komariPath);
 
     if (process.platform === 'win32') {
       exec(`del /f /q ${filesToDelete.join(' ')} > nul 2>&1`, (error) => {
