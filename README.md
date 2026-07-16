@@ -22,7 +22,7 @@ Telegram交流反馈群组：https://t.me/eooceu
 * 本项目是针对node环境的paas平台和游戏玩具而生，采用Argo隧道部署节点，集成Komari探针可选。
 * node玩具平台只需上传index.js和package.json即可，paas平台需要docker部署的才上传Dockerfile。
 * 不填写ARGO_DOMAIN和ARGO_AUTH两个变量即启用临时隧道，反之则使用固定隧道。
-* Komari agent使用WebSocket v2协议连接服务器，当端口为{443,8443,2096,2087,2083,2053}其中之一时，自动启用wss加密连接。
+* Komari agent 直接使用 `KOMARI_SERVER` 作为 endpoint 连接服务器，格式为 `https://www.mydomain.com`，不需要配置端口和路径。
 
 ## 📋 环境变量
 
@@ -34,9 +34,8 @@ Telegram交流反馈群组：https://t.me/eooceu
 | PORT | 否 | 3000 | HTTP服务监听端口 |
 | ARGO_PORT | 否 | 8001 | Argo隧道端口 |
 | UUID | 否 | 自动生成 | 用户UUID,留空自动生成 |
-| KOMARI_SERVER | 否 | - | Komari服务器地址(例如 nz.abc.com:25774) |
-| KOMARI_PORT | 否 | 25774 | Komari端口，留空则从KOMARI_SERVER中解析 |
-| KOMARI_KEY | 否 | - | Komari agent密钥/认证token |
+| KOMARI_SERVER | 否 | - | Komari 服务器地址，格式：`https://www.mydomain.com`（不需要端口和路径） |
+| KOMARI_KEY | 否 | - | Komari 自动发现密钥 |
 | ARGO_DOMAIN | 否 | - | Argo固定隧道域名 |
 | ARGO_AUTH | 否 | - | Argo固定隧道密钥 |
 | CFIP | 否 | www.visa.com.tw | 节点优选域名或IP |
@@ -92,8 +91,8 @@ export UPLOAD_URL="https://your-merge-sub-domain.com"
 export PROJECT_URL="https://your-project-domain.com"
 export PORT=3000
 export UUID="your-uuid-here"
-export KOMARI_SERVER="nz.your-domain.com:8008"
-export KOMARI_KEY="your-komari-token"
+export KOMARI_SERVER="https://www.mydomain.com"
+	export KOMARI_KEY="your-komari-key"
 ```
 
 ## 📦 作为npm模块使用
