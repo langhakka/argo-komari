@@ -35,7 +35,7 @@ Telegram交流反馈群组：https://t.me/eooceu
 | ARGO_PORT | 否 | 8001 | Argo隧道端口 |
 | UUID | 否 | 自动生成 | 用户UUID,留空自动生成 |
 | KOMARI_SERVER | 否 | - | Komari 服务器地址 |
-| KOMARI_TOKEN | 否 | - | Komari 自动发现密钥，兼容旧名 KOMARI_KEY |
+| KOMARI_TOKEN | 否 | - | Komari 自动发现密钥 |
 | ARGO_DOMAIN | 否 | - | Argo固定隧道域名 |
 | ARGO_AUTH | 否 | - | Argo固定隧道密钥 |
 | CFIP | 否 | www.visa.com.tw | 节点优选域名或IP |

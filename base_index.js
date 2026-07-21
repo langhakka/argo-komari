@@ -32,7 +32,7 @@ log('info', `Generated UUID: ${newUuid}`);
 	  return newUuid;
 })(); // 留空自动生成UUID并持久化保存
 const KOMARI_SERVER = process.env.KOMARI_SERVER || '';        // komari 服务器地址，格式：https://www.mydomain.com（不需要端口和路径）
-const KOMARI_KEY = process.env.KOMARI_TOKEN || process.env.KOMARI_KEY || '';              // komari 自动发现密钥
+const KOMARI_KEY = process.env.KOMARI_TOKEN || '';              // komari 自动发现密钥
 const ARGO_DOMAIN = process.env.ARGO_DOMAIN || '';          // 固定隧道域名,留空即启用临时隧道
 const ARGO_AUTH = process.env.ARGO_AUTH || '';              // 固定隧道密钥json或token,留空即启用临时隧道,json获取地址：https://json.zone.id
 const ARGO_PORT = process.env.ARGO_PORT || 8001;            // 固定隧道端口,使用token需在cloudflare后台设置和这里一致
