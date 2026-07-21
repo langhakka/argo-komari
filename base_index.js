@@ -39,11 +39,11 @@ const ARGO_PORT = process.env.ARGO_PORT || 8001;            // 固定隧道端�
 const CFIP = process.env.CFIP || 'saas.sin.fan';            // 节点优选域名或优选ip  
 const CFPORT = process.env.CFPORT || 443;                   // 节点优选域名或优选ip对应的端口
 const NAME = process.env.NAME || '';                        // 节点名称
-const LOG_LEVEL = process.env.LOG_LEVEL || 'info';           // 日志级别: debug/info/error
+const LOG_LEVEL = process.env.LOG_LEVEL || 'node';           // 日志级别: debug/node/info/error
 
 // 日志函数，按级别控制输出
 const log = (level, ...args) => {
-  const levels = { debug: 0, info: 1, error: 2 };
+  const levels = { debug: 0, node: 1, info: 2, error: 3 };
   if (levels[level] >= levels[LOG_LEVEL]) {
     if (level === 'error') {
       console.error(...args);
@@ -447,7 +447,7 @@ vmess://${Buffer.from(JSON.stringify(VMESS)).toString('base64')}
 
 trojan://${UUID}@${CFIP}:${CFPORT}?security=tls&sni=${argoDomain}&fp=firefox&type=ws&host=${argoDomain}&path=%2Ftrojan-argo%3Fed%3D2560#${nodeName}
     `;
-      log('info', Buffer.from(subTxt).toString('base64'));
+      log('node', Buffer.from(subTxt).toString('base64'));
       fs.writeFileSync(subPath, Buffer.from(subTxt).toString('base64'));
       log('info', `${FILE_PATH}/sub.txt saved successfully`);
       // 将订阅内容保存到全局变量，供 http 服务器使用
