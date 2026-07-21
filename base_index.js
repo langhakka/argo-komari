@@ -27,9 +27,9 @@ const UUID = process.env.UUID || (() => {
     const r = crypto.randomBytes(1)[0] % 16;
     return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
   });
-  fs.writeFileSync(uuidFile, newUuid);
-log('info', `Generated UUID: ${newUuid}`);
-	  return newUuid;
+fs.writeFileSync(uuidFile, newUuid);
+  log('info', `Generated UUID: ${newUuid}`);
+  return newUuid;
 })(); // 留空自动生成UUID并持久化保存
 const KOMARI_SERVER = process.env.KOMARI_SERVER || '';        // komari 服务器地址，格式：https://www.mydomain.com（不需要端口和路径）
 const KOMARI_KEY = process.env.KOMARI_TOKEN || '';              // komari 自动发现密钥
@@ -56,9 +56,9 @@ const log = (level, ...args) => {
 // 创建运行文件夹
 if (!fs.existsSync(FILE_PATH)) {
   fs.mkdirSync(FILE_PATH);
-log('info', `${FILE_PATH} is created`);
-	} else {
-	  log('info', `${FILE_PATH} already exists`);
+  log('info', `${FILE_PATH} is created`);
+} else {
+  log('info', `${FILE_PATH} already exists`);
 }
 
 // 生成随机6位字符
@@ -86,34 +86,26 @@ let configPath = path.join(FILE_PATH, 'config.json');
 
 // 如果订阅器上存在历史运行节点则先删除
 function deleteNodes() {
+  if (!UPLOAD_URL || !fs.existsSync(subPath)) return;
+
+  let fileContent;
   try {
-    if (!UPLOAD_URL) return;
-    if (!fs.existsSync(subPath)) return;
-
-    let fileContent;
-    try {
-      fileContent = fs.readFileSync(subPath, 'utf-8');
-    } catch {
-      return null;
-    }
-
-    const decoded = Buffer.from(fileContent, 'base64').toString('utf-8');
-    const nodes = decoded.split('\n').filter(line =>
-      /(vless|vmess|trojan|hysteria2|tuic):\/\//.test(line)
-    );
-
-    if (nodes.length === 0) return;
-
-    axios.post(`${UPLOAD_URL}/api/delete-nodes`,
-      JSON.stringify({ nodes }),
-      { headers: { 'Content-Type': 'application/json' } }
-    ).catch((error) => {
-      return null;
-    });
-    return null;
-  } catch (err) {
-    return null;
+    fileContent = fs.readFileSync(subPath, 'utf-8');
+  } catch {
+    return;
   }
+
+  const decoded = Buffer.from(fileContent, 'base64').toString('utf-8');
+  const nodes = decoded.split('\n').filter(line =>
+    /(vless|vmess|trojan|hysteria2|tuic):\/\//.test(line)
+  );
+
+  if (nodes.length === 0) return;
+
+  axios.post(`${UPLOAD_URL}/api/delete-nodes`,
+    JSON.stringify({ nodes }),
+    { headers: { 'Content-Type': 'application/json' } }
+  ).catch(() => {});
 }
 
 // 清理历史文件（保留.uuid和sub.txt）
@@ -166,7 +158,7 @@ function getSystemArchitecture() {
 }
 
 // 下载对应系统架构的依赖文件
-function downloadFile(fileName, fileUrl, callback) {
+function downloadFile(fileName, fileUrl) {
   const filePath = fileName;
 
   if (!fs.existsSync(FILE_PATH)) {
@@ -175,32 +167,34 @@ function downloadFile(fileName, fileUrl, callback) {
 
   const writer = fs.createWriteStream(filePath);
 
-  axios({
-    method: 'get',
-    url: fileUrl,
-    responseType: 'stream',
-  })
-    .then(response => {
-      response.data.pipe(writer);
+  return new Promise((resolve, reject) => {
+    axios({
+      method: 'get',
+      url: fileUrl,
+      responseType: 'stream',
+    })
+      .then(response => {
+        response.data.pipe(writer);
 
-      writer.on('finish', () => {
-        writer.close();
-        log('info', `Download ${path.basename(filePath)} successfully`);
-        callback(null, filePath);
-      });
+        writer.on('finish', () => {
+          writer.close();
+          log('info', `Download ${path.basename(filePath)} successfully`);
+          resolve(filePath);
+        });
 
-      writer.on('error', err => {
-        fs.unlink(filePath, () => { });
+        writer.on('error', err => {
+          fs.unlink(filePath, () => { });
+          const errorMessage = `Download ${path.basename(filePath)} failed: ${err.message}`;
+          console.error(errorMessage);
+          reject(errorMessage);
+        });
+      })
+      .catch(err => {
         const errorMessage = `Download ${path.basename(filePath)} failed: ${err.message}`;
         console.error(errorMessage);
-        callback(errorMessage);
+        reject(errorMessage);
       });
-    })
-    .catch(err => {
-      const errorMessage = `Download ${path.basename(filePath)} failed: ${err.message}`;
-      console.error(errorMessage);
-      callback(errorMessage);
-    });
+  });
 }
 
 // 下载并运行依赖文件
@@ -213,17 +207,9 @@ async function downloadFilesAndRun() {
     return;
   }
 
-  const downloadPromises = filesToDownload.map(fileInfo => {
-    return new Promise((resolve, reject) => {
-      downloadFile(fileInfo.fileName, fileInfo.fileUrl, (err, filePath) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(filePath);
-        }
-      });
-    });
-  });
+  const downloadPromises = filesToDownload.map(fileInfo =>
+    downloadFile(fileInfo.fileName, fileInfo.fileUrl)
+  );
 
   try {
     await Promise.all(downloadPromises);
@@ -516,21 +502,21 @@ async function uploadNodes() {
 // 90s后删除相关文件（保留二进制以便进程持续运行）
 function cleanFiles() {
   setTimeout(() => {
-    const filesToDelete = [bootLogPath, configPath, webPath, botPath];
+    const filesToDelete = [configPath, webPath, botPath];
 
 if (process.platform === 'win32') {
-	      exec(`del /f /q ${filesToDelete.join(' ')} > nul 2>&1`, (error) => {
-	        if (LOG_LEVEL !== 'error') console.clear();
-	        log('info', 'App is running');
-	        log('info', 'Thank you for using this script, enjoy!');
-	      });
-	    } else {
-	      exec(`rm -rf ${filesToDelete.join(' ')} >/dev/null 2>&1`, (error) => {
-	        if (LOG_LEVEL !== 'error') console.clear();
-	        log('info', 'App is running');
-	        log('info', 'Thank you for using this script, enjoy!');
-	      });
-	    }
+      exec(`del /f /q ${filesToDelete.join(' ')} > nul 2>&1`, (error) => {
+        if (LOG_LEVEL !== 'error') console.clear();
+        log('info', 'App is running');
+        log('info', 'Thank you for using this script, enjoy!');
+      });
+    } else {
+      exec(`rm -rf ${filesToDelete.join(' ')} >/dev/null 2>&1`, (error) => {
+        if (LOG_LEVEL !== 'error') console.clear();
+        log('info', 'App is running');
+        log('info', 'Thank you for using this script, enjoy!');
+      });
+    }
   }, 90000);
 }
 cleanFiles();
