@@ -28,8 +28,8 @@ const UUID = process.env.UUID || (() => {
     return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
   });
   fs.writeFileSync(uuidFile, newUuid);
-  console.log(`Generated UUID: ${newUuid}`);
-  return newUuid;
+log('info', `Generated UUID: ${newUuid}`);
+	  return newUuid;
 })(); // 留空自动生成UUID并持久化保存
 const KOMARI_SERVER = process.env.KOMARI_SERVER || '';        // komari 服务器地址，格式：https://www.mydomain.com（不需要端口和路径）
 const KOMARI_KEY = process.env.KOMARI_KEY || '';              // komari 自动发现密钥
@@ -39,13 +39,26 @@ const ARGO_PORT = process.env.ARGO_PORT || 8001;            // 固定隧道端�
 const CFIP = process.env.CFIP || 'saas.sin.fan';            // 节点优选域名或优选ip  
 const CFPORT = process.env.CFPORT || 443;                   // 节点优选域名或优选ip对应的端口
 const NAME = process.env.NAME || '';                        // 节点名称
+const LOG_LEVEL = process.env.LOG_LEVEL || 'info';           // 日志级别: debug/info/error
+
+// 日志函数，按级别控制输出
+const log = (level, ...args) => {
+  const levels = { debug: 0, info: 1, error: 2 };
+  if (levels[level] >= levels[LOG_LEVEL]) {
+    if (level === 'error') {
+      console.error(...args);
+    } else {
+      console.log(...args);
+    }
+  }
+};
 
 // 创建运行文件夹
 if (!fs.existsSync(FILE_PATH)) {
   fs.mkdirSync(FILE_PATH);
-  console.log(`${FILE_PATH} is created`);
-} else {
-  console.log(`${FILE_PATH} already exists`);
+log('info', `${FILE_PATH} is created`);
+	} else {
+	  log('info', `${FILE_PATH} already exists`);
 }
 
 // 生成随机6位字符
@@ -172,7 +185,7 @@ function downloadFile(fileName, fileUrl, callback) {
 
       writer.on('finish', () => {
         writer.close();
-        console.log(`Download ${path.basename(filePath)} successfully`);
+        log('info', `Download ${path.basename(filePath)} successfully`);
         callback(null, filePath);
       });
 
@@ -196,7 +209,7 @@ async function downloadFilesAndRun() {
   const filesToDownload = getFilesForArchitecture(architecture);
 
   if (filesToDownload.length === 0) {
-    console.log(`Can't find a file for the current architecture`);
+    log('info', `Can't find a file for the current architecture`);
     return;
   }
 
@@ -227,7 +240,7 @@ async function downloadFilesAndRun() {
           if (err) {
             console.error(`Empowerment failed for ${absoluteFilePath}: ${err}`);
           } else {
-            console.log(`Empowerment success for ${absoluteFilePath}: ${newPermissions.toString(8)}`);
+            log('info', `Empowerment success for ${absoluteFilePath}: ${newPermissions.toString(8)}`);
           }
         });
       }
@@ -253,16 +266,16 @@ async function downloadFilesAndRun() {
         console.error(`komari agent spawn error: ${err.message}`);
       });
       komari.on('exit', (code) => {
-        console.log(`komari agent exited with code ${code}`);
+        log('info', `komari agent exited with code ${code}`);
       });
 
-      console.log(`komari agent started -> ${endpoint}`);
+      log('info', `komari agent started -> ${endpoint}`);
       await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (error) {
       console.error(`komari agent start error: ${error}`);
     }
   } else {
-    console.log('KOMARI_SERVER or KOMARI_KEY is empty, skip running komari agent');
+    log('info', 'KOMARI_SERVER or KOMARI_KEY is empty, skip running komari agent');
   }
 
   // 运行xr-ay
@@ -273,10 +286,10 @@ async function downloadFilesAndRun() {
       console.error(`web spawn error: ${err.message}`);
     });
     web.on('exit', (code) => {
-      console.log(`web exited with code ${code}`);
+      log('info', `web exited with code ${code}`);
     });
 
-    console.log(`${webName} is running`);
+    log('info', `${webName} is running`);
     await new Promise((resolve) => setTimeout(resolve, 1000));
   } catch (error) {
     console.error(`web start error: ${error}`);
@@ -301,10 +314,10 @@ async function downloadFilesAndRun() {
         console.error(`cloudflared spawn error: ${err.message}`);
       });
       bot.on('exit', (code) => {
-        console.log(`cloudflared exited with code ${code}`);
+        log('info', `cloudflared exited with code ${code}`);
       });
 
-      console.log(`${botName} is running`);
+      log('info', `${botName} is running`);
       await new Promise((resolve) => setTimeout(resolve, 2000));
     } catch (error) {
       console.error(`cloudflared start error: ${error}`);
@@ -337,7 +350,7 @@ function getFilesForArchitecture(architecture) {
 // 获取固定隧道json
 function argoType() {
   if (!ARGO_AUTH || !ARGO_DOMAIN) {
-    console.log("ARGO_DOMAIN or ARGO_AUTH is empty, use quick tunnels");
+    log('info', "ARGO_DOMAIN or ARGO_AUTH is empty, use quick tunnels");
     return;
   }
 
@@ -357,7 +370,7 @@ function argoType() {
   `;
     fs.writeFileSync(path.join(FILE_PATH, 'tunnel.yml'), tunnelYaml);
   } else {
-    console.log(`Using token connect to tunnel, please set ${ARGO_PORT} in clouudflare`);
+    log('info', `Using token connect to tunnel, please set ${ARGO_PORT} in clouudflare`);
   }
 }
 
@@ -367,7 +380,7 @@ async function extractDomains(retries = 30) {
 
   if (ARGO_AUTH && ARGO_DOMAIN) {
     argoDomain = ARGO_DOMAIN;
-    console.log('ARGO_DOMAIN:', argoDomain);
+    log('info', 'ARGO_DOMAIN:', argoDomain);
     await generateLinks(argoDomain);
     return;
   }
@@ -384,15 +397,15 @@ async function extractDomains(retries = 30) {
         const domainMatch = line.match(/https?:\/\/([^ ]*trycloudflare\.com)\/?/);
         if (domainMatch) {
           argoDomain = domainMatch[1];
-          console.log('ArgoDomain:', argoDomain);
+          log('info', 'ArgoDomain:', argoDomain);
           await generateLinks(argoDomain);
           return;
         }
       }
       // 有文件但还没 domain，等一会再试
-      console.log(`Waiting for ArgoDomain... (${i + 1}/${retries})`);
+      log('debug', `Waiting for ArgoDomain... (${i + 1}/${retries})`);
     } catch (error) {
-      console.log(`Waiting for boot.log... (${i + 1}/${retries})`);
+      log('debug', `Waiting for boot.log... (${i + 1}/${retries})`);
     }
     await new Promise((resolve) => setTimeout(resolve, 3000));
   }
@@ -434,9 +447,9 @@ vmess://${Buffer.from(JSON.stringify(VMESS)).toString('base64')}
 
 trojan://${UUID}@${CFIP}:${CFPORT}?security=tls&sni=${argoDomain}&fp=firefox&type=ws&host=${argoDomain}&path=%2Ftrojan-argo%3Fed%3D2560#${nodeName}
     `;
-      console.log(Buffer.from(subTxt).toString('base64'));
+      log('info', Buffer.from(subTxt).toString('base64'));
       fs.writeFileSync(subPath, Buffer.from(subTxt).toString('base64'));
-      console.log(`${FILE_PATH}/sub.txt saved successfully`);
+      log('info', `${FILE_PATH}/sub.txt saved successfully`);
       // 将订阅内容保存到全局变量，供 http 服务器使用
       subContent = Buffer.from(subTxt).toString('base64');
       uploadNodes();
@@ -460,7 +473,7 @@ async function uploadNodes() {
       });
 
       if (response && response.status === 200) {
-        console.log('Subscription uploaded successfully');
+        log('info', 'Subscription uploaded successfully');
         return response;
       } else {
         return null;
@@ -486,7 +499,7 @@ async function uploadNodes() {
         headers: { 'Content-Type': 'application/json' }
       });
       if (response && response.status === 200) {
-        console.log('Nodes uploaded successfully');
+        log('info', 'Nodes uploaded successfully');
         return response;
       } else {
         return null;
@@ -505,19 +518,19 @@ function cleanFiles() {
   setTimeout(() => {
     const filesToDelete = [bootLogPath, configPath, webPath, botPath];
 
-    if (process.platform === 'win32') {
-      exec(`del /f /q ${filesToDelete.join(' ')} > nul 2>&1`, (error) => {
-        console.clear();
-        console.log('App is running');
-        console.log('Thank you for using this script, enjoy!');
-      });
-    } else {
-      exec(`rm -rf ${filesToDelete.join(' ')} >/dev/null 2>&1`, (error) => {
-        console.clear();
-        console.log('App is running');
-        console.log('Thank you for using this script, enjoy!');
-      });
-    }
+if (process.platform === 'win32') {
+	      exec(`del /f /q ${filesToDelete.join(' ')} > nul 2>&1`, (error) => {
+	        if (LOG_LEVEL !== 'error') console.clear();
+	        log('info', 'App is running');
+	        log('info', 'Thank you for using this script, enjoy!');
+	      });
+	    } else {
+	      exec(`rm -rf ${filesToDelete.join(' ')} >/dev/null 2>&1`, (error) => {
+	        if (LOG_LEVEL !== 'error') console.clear();
+	        log('info', 'App is running');
+	        log('info', 'Thank you for using this script, enjoy!');
+	      });
+	    }
   }, 90000);
 }
 cleanFiles();
@@ -525,7 +538,7 @@ cleanFiles();
 // 自动访问项目URL
 async function AddVisitTask() {
   if (!AUTO_ACCESS || !PROJECT_URL) {
-    console.log("Skipping adding automatic access task");
+    log('info', "Skipping adding automatic access task");
     return;
   }
 
@@ -537,7 +550,7 @@ async function AddVisitTask() {
         'Content-Type': 'application/json'
       }
     });
-    console.log(`automatic access task added successfully`);
+    log('info', `automatic access task added successfully`);
     return response;
   } catch (error) {
     console.error(`Add automatic access task faild: ${error.message}`);
@@ -604,4 +617,4 @@ const server = http.createServer(async (req, res) => {
   res.end('Not Found');
 });
 
-server.listen(PORT, () => console.log(`http server is running on port:${PORT}!`));
+server.listen(PORT, () => log('info', `http server is running on port:${PORT}!`));
