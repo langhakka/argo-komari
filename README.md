@@ -43,6 +43,7 @@ Telegram交流反馈群组：https://t.me/eooceu
 | NAME | 否 | Vls | 节点名称前缀 |
 | FILE_PATH | 否 | ./tmp | 运行目录 |
 | SUB_PATH | 否 | sub | 订阅路径 |
+| LOG_LEVEL | 否 | info | 日志级别: `debug` 输出所有日志, `info` 输出信息日志, `error` 仅输出错误 |
 
 ## 🌐 订阅地址
 
