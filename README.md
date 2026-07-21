@@ -34,7 +34,7 @@ Telegram交流反馈群组：https://t.me/eooceu
 | PORT | 否 | 3000 | HTTP服务监听端口 |
 | ARGO_PORT | 否 | 8001 | Argo隧道端口 |
 | UUID | 否 | 自动生成 | 用户UUID,留空自动生成 |
-| KOMARI_SERVER | 否 | - | Komari 服务器地址，格式：`https://www.mydomain.com`（不需要端口和路径） |
+| KOMARI_SERVER | 否 | - | Komari 服务器地址 |
 | KOMARI_KEY | 否 | - | Komari 自动发现密钥 |
 | ARGO_DOMAIN | 否 | - | Argo固定隧道域名 |
 | ARGO_AUTH | 否 | - | Argo固定隧道密钥 |
