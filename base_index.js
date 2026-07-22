@@ -53,7 +53,22 @@ const log = (level, ...args) => {
   }
 };
 
-// 创建运行文件夹
+const UUID = process.env.UUID || (() => {
+  if (!fs.existsSync(FILE_PATH)) {
+    fs.mkdirSync(FILE_PATH, { recursive: true });
+  }
+  const uuidFile = path.join(FILE_PATH, '.uuid');
+  if (fs.existsSync(uuidFile)) {
+    return fs.readFileSync(uuidFile, 'utf-8').trim();
+  }
+  const newUuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = crypto.randomBytes(1)[0] % 16;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+  fs.writeFileSync(uuidFile, newUuid);
+  log('info', `Generated UUID: ${newUuid}`);
+  return newUuid;
+})(); // 留空自动生成UUID并持久化保存
 if (!fs.existsSync(FILE_PATH)) {
   fs.mkdirSync(FILE_PATH);
   log('info', `${FILE_PATH} is created`);
