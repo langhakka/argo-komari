@@ -15,22 +15,6 @@ const AUTO_ACCESS = process.env.AUTO_ACCESS || false; // false关闭自动保活
 const FILE_PATH = process.env.FILE_PATH || '.tmp';   // 运行目录,sub节点文件保存目录
 const SUB_PATH = process.env.SUB_PATH || 'sub';       // 订阅路径
 const PORT = process.env.SERVER_PORT || process.env.PORT || 3000;        // http服务订阅端口
-const UUID = process.env.UUID || (() => {
-  if (!fs.existsSync(FILE_PATH)) {
-    fs.mkdirSync(FILE_PATH, { recursive: true });
-  }
-  const uuidFile = path.join(FILE_PATH, '.uuid');
-  if (fs.existsSync(uuidFile)) {
-    return fs.readFileSync(uuidFile, 'utf-8').trim();
-  }
-  const newUuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-    const r = crypto.randomBytes(1)[0] % 16;
-    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-  });
-fs.writeFileSync(uuidFile, newUuid);
-  log('info', `Generated UUID: ${newUuid}`);
-  return newUuid;
-})(); // 留空自动生成UUID并持久化保存
 const KOMARI_SERVER = process.env.KOMARI_SERVER || '';        // komari 服务器地址，格式：https://www.mydomain.com（不需要端口和路径）
 const KOMARI_KEY = process.env.KOMARI_TOKEN || '';              // komari 自动发现密钥
 const ARGO_DOMAIN = process.env.ARGO_DOMAIN || '';          // 固定隧道域名,留空即启用临时隧道
@@ -519,7 +503,7 @@ function cleanFiles() {
   setTimeout(() => {
     const filesToDelete = [configPath, webPath, botPath];
 
-if (process.platform === 'win32') {
+    if (process.platform === 'win32') {
       exec(`del /f /q ${filesToDelete.join(' ')} > nul 2>&1`, (error) => {
         if (LOG_LEVEL !== 'error') console.clear();
         log('info', 'App is running');
