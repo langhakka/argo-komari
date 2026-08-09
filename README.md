@@ -93,7 +93,7 @@ export PROJECT_URL="https://your-project-domain.com"
 export PORT=3000
 export UUID="your-uuid-here"
 export KOMARI_SERVER="https://www.mydomain.com"
-	export KOMARI_KEY="your-komari-key"
+	export KOMARI_TOKEN="your-komari-key"
 ```
 
 ## 📦 作为npm模块使用

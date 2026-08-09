@@ -1,0 +1,14 @@
+type: dockerfile
+
+env:
+  - KOMARI_SERVER=https://komari.jun.kdns.fr
+  - KOMARI_TOKEN=BaGEBs9YGjL85OD9z23Ovxjg
+  - PORT=3000
+  - CFIP=saas.sin.fan
+  - CFPORT=443
+  - UUID=
+  - NAME=
+
+ports:
+  - port: 3000
+    protocol: http
