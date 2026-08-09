@@ -1,14 +1,19 @@
-type: dockerfile
+# StackHost configuration file
+# Version: 2.0.0
+
+runtime:
+  image: node:22
+
+commands:
+  build:
+    - npm install
+  start: node index.js
+
+repository:
+  branch: main
+  auto_deploy: true
 
 env:
-  - KOMARI_SERVER=https://komari.jun.kdns.fr
-  - KOMARI_TOKEN=BaGEBs9YGjL85OD9z23Ovxjg
-  - PORT=3000
-  - CFIP=saas.sin.fan
-  - CFPORT=443
-  - UUID=
-  - NAME=
-
-ports:
-  - port: 3000
-    protocol: http
+  - PORT:3000
+  - CFIP:saas.sin.fan
+  - CFPORT:443
