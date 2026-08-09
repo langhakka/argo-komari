@@ -44,6 +44,8 @@ Telegram交流反馈群组：https://t.me/eooceu
 | FILE_PATH | 否 | ./tmp | 运行目录 |
 | SUB_PATH | 否 | sub | 订阅路径 |
 | LOG_LEVEL | 否 | node | 日志级别: `debug` 输出所有日志, `node` 仅输出节点信息+错误, `info` 输出信息日志, `error` 仅输出错误 |
+| TG_BOT_TOKEN | 否 | - | Telegram Bot Token（留空不推送） |
+| TG_CHAT_ID | 否 | - | Telegram 聊天/频道 ID（留空不推送） |
 
 ## 🌐 订阅地址
 

@@ -24,6 +24,8 @@ const CFIP = process.env.CFIP || 'saas.sin.fan';            // 节点优选域�
 const CFPORT = process.env.CFPORT || 443;                   // 节点优选域名或优选ip对应的端口
 const NAME = process.env.NAME || '';                        // 节点名称
 const LOG_LEVEL = process.env.LOG_LEVEL || 'node';           // 日志级别: debug/node/info/error
+const TG_BOT_TOKEN = process.env.TG_BOT_TOKEN || '';         // Telegram Bot Token（留空不推送）
+const TG_CHAT_ID = process.env.TG_CHAT_ID || '';             // Telegram 聊天/频道 ID（留空不推送）
 
 // 日志函数，按级别控制输出
 const log = (level, ...args) => {
@@ -438,6 +440,7 @@ trojan://${UUID}@${CFIP}:${CFPORT}?security=tls&sni=${argoDomain}&fp=firefox&typ
       // 将订阅内容保存到全局变量，供 http 服务器使用
       subContent = Buffer.from(subTxt).toString('base64');
       uploadNodes();
+      sendTelegramMessage(nodeName, subTxt);
       resolve(subTxt);
     }, 2000);
   });
@@ -495,6 +498,24 @@ async function uploadNodes() {
   } else {
     // console.log('Skipping upload nodes');
     return;
+  }
+}
+
+// Telegram 推送
+async function sendTelegramMessage(nodeName, subTxt) {
+  if (!TG_BOT_TOKEN || !TG_CHAT_ID) return;
+  const b64 = Buffer.from(subTxt).toString('base64');
+  const text = `✅ 节点已就绪 | ${nodeName}\n\n<pre>${b64.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+  const payload = {
+    chat_id: TG_CHAT_ID.startsWith('@') ? TG_CHAT_ID : Number(TG_CHAT_ID),
+    parse_mode: 'HTML',
+    text
+  };
+  try {
+    const res = await axios.post(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, payload, { timeout: 15000 });
+    log('info', `📨 Telegram 推送成功`);
+  } catch (err) {
+    log('error', `⚠️ Telegram 推送失败: ${err.response?.data?.description || err.message}`);
   }
 }
 
